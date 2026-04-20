@@ -19,6 +19,7 @@ export default function QuizPage() {
   const [answers, setAnswers] = useState<Record<string, number>>({});
   const [showDimensionIntro, setShowDimensionIntro] = useState(true);
   const [showTransition, setShowTransition] = useState(false);
+  const [selectedOption, setSelectedOption] = useState<number | null>(null);
   const [animKey, setAnimKey] = useState(0);
 
   const currentDimension = dimensions[currentDimensionIndex];
@@ -28,14 +29,7 @@ export default function QuizPage() {
   const answeredCount = Object.keys(answers).length;
   const progressPercent = (answeredCount / TOTAL_QUESTIONS) * 100;
 
-  const hasCurrentAnswer = currentQuestion && answers[currentQuestion.id] !== undefined;
-  const isLastQuestion =
-    currentDimensionIndex === dimensions.length - 1 &&
-    currentQuestionIndex === QUESTIONS_PER_DIMENSION - 1;
-
-  const canGoBack =
-    !showDimensionIntro &&
-    !showTransition &&
+  const canGoBack = !showDimensionIntro && !showTransition &&
     (currentQuestionIndex > 0 || currentDimensionIndex > 0);
 
   function bumpAnim() {
@@ -43,47 +37,48 @@ export default function QuizPage() {
   }
 
   function handleOptionSelect(questionId: string, value: number) {
-    setAnswers(prev => ({ ...prev, [questionId]: value }));
+    if (selectedOption !== null) return;
+    setSelectedOption(value);
+    const newAnswers = { ...answers, [questionId]: value };
+    setAnswers(newAnswers);
+    setTimeout(() => advanceQuiz(newAnswers), 150);
   }
 
-  function advanceQuiz(currentAnswers: Record<string, number>) {
-    const lastQ = currentQuestionIndex >= QUESTIONS_PER_DIMENSION - 1;
-    const lastD = currentDimensionIndex >= dimensions.length - 1;
+  function advanceQuiz(newAnswers: Record<string, number>) {
+    const isLastQuestion = currentQuestionIndex >= QUESTIONS_PER_DIMENSION - 1;
+    const isLastDimension = currentDimensionIndex >= dimensions.length - 1;
 
-    if (lastQ && lastD) {
+    if (isLastQuestion && isLastDimension) {
       const id = generateId();
-      localStorage.setItem('axon-quiz-result', JSON.stringify({ id, answers: currentAnswers }));
+      localStorage.setItem('axon-quiz-result', JSON.stringify({ id, answers: newAnswers }));
       router.push('/results?id=' + id);
       return;
     }
 
-    if (lastQ) {
+    if (isLastQuestion) {
       setShowTransition(true);
       setTimeout(() => {
         setShowTransition(false);
         setCurrentDimensionIndex(prev => prev + 1);
         setCurrentQuestionIndex(0);
         setShowDimensionIntro(true);
+        setSelectedOption(null);
       }, 700);
     } else {
       setCurrentQuestionIndex(prev => prev + 1);
+      setSelectedOption(null);
       bumpAnim();
     }
   }
 
-  function handleNext() {
-    if (!hasCurrentAnswer) return;
-    advanceQuiz(answers);
-  }
-
   const handleBack = useCallback(() => {
     if (!canGoBack) return;
+    setSelectedOption(null);
     if (currentQuestionIndex > 0) {
       setCurrentQuestionIndex(prev => prev - 1);
       bumpAnim();
     } else {
-      const prevDimIndex = currentDimensionIndex - 1;
-      setCurrentDimensionIndex(prevDimIndex);
+      setCurrentDimensionIndex(currentDimensionIndex - 1);
       setCurrentQuestionIndex(QUESTIONS_PER_DIMENSION - 1);
       setShowDimensionIntro(false);
       bumpAnim();
@@ -96,9 +91,7 @@ export default function QuizPage() {
     return (
       <div className="flex-1 flex items-center justify-center transition-screen anim-fade">
         <div className="text-center">
-          <p className="text-sm mb-3 anim-fade-up" style={{ color: '#a900f1', fontWeight: 500 }}>
-            Up next
-          </p>
+          <p className="text-sm mb-3 anim-fade-up" style={{ color: '#a900f1', fontWeight: 500 }}>Up next</p>
           <div className="relative inline-flex items-center justify-center mb-4 anim-scale delay-100">
             <div className="glow-ring" />
             <span style={{ fontSize: 64, display: 'block' }}>{nextDimension.icon}</span>
@@ -114,73 +107,41 @@ export default function QuizPage() {
   // Dimension intro card
   if (showDimensionIntro) {
     return (
-      <div
-        className="flex-1 flex items-center justify-center px-4"
-        style={{ backgroundColor: '#230533' }}
-      >
+      <div className="flex-1 flex items-center justify-center px-4" style={{ backgroundColor: '#230533' }}>
         <div className="w-full max-w-lg text-center anim-fade">
           <div className="relative inline-flex items-center justify-center mb-6 anim-scale">
             <div className="glow-ring" />
-            <span className="anim-float" style={{ fontSize: 72, display: 'block' }}>
-              {currentDimension.icon}
-            </span>
+            <span className="anim-float" style={{ fontSize: 72, display: 'block' }}>{currentDimension.icon}</span>
           </div>
-
           <div className="gradient-bar mx-auto mb-6 anim-fade-up delay-100" style={{ width: 64 }} />
-
-          <h2
-            className="mb-4 anim-fade-up delay-200"
-            style={{ fontSize: 36, fontWeight: 600, color: '#ffffff', lineHeight: 1.2 }}
-          >
+          <h2 className="mb-4 anim-fade-up delay-200" style={{ fontSize: 36, fontWeight: 600, color: '#ffffff', lineHeight: 1.2 }}>
             {currentDimension.label}
           </h2>
-
-          <p
-            className="mb-3 anim-fade-up delay-300"
-            style={{ fontSize: 16, fontWeight: 300, color: '#b0b8c8', lineHeight: 1.65 }}
-          >
+          <p className="mb-3 anim-fade-up delay-300" style={{ fontSize: 16, fontWeight: 300, color: '#b0b8c8', lineHeight: 1.65 }}>
             {currentDimension.description}
           </p>
-
-          <p
-            className="mb-10 anim-fade-up delay-400"
-            style={{ fontSize: 13, color: '#a900f1', fontWeight: 400 }}
-          >
+          <p className="mb-10 anim-fade-up delay-400" style={{ fontSize: 13, color: '#a900f1', fontWeight: 400 }}>
             {QUESTIONS_PER_DIMENSION} questions
           </p>
-
           <div className="anim-fade-up delay-500">
             <button
               onClick={() => setShowDimensionIntro(false)}
               className="gradient-bg inline-flex items-center justify-center text-white"
-              style={{
-                height: 50,
-                minWidth: 180,
-                borderRadius: 10,
-                fontSize: 15,
-                fontWeight: 500,
-                border: 'none',
-                cursor: 'pointer',
-                letterSpacing: '0.01em',
-              }}
+              style={{ height: 50, minWidth: 180, borderRadius: 10, fontSize: 15, fontWeight: 500, border: 'none', cursor: 'pointer', letterSpacing: '0.01em' }}
             >
               {"Let's go \u2192"}
             </button>
           </div>
-
           {currentDimensionIndex > 0 && (
             <div className="mt-6 anim-fade delay-500">
-              <button
-                className="back-btn"
-                onClick={() => {
-                  const prevDimIndex = currentDimensionIndex - 1;
-                  setCurrentDimensionIndex(prevDimIndex);
-                  setCurrentQuestionIndex(QUESTIONS_PER_DIMENSION - 1);
-                  setShowDimensionIntro(false);
-                  bumpAnim();
-                }}
-              >
-                <span style={{ fontSize: 16 }}>&#8592;</span> Previous section
+              <button className="back-btn" onClick={() => {
+                setCurrentDimensionIndex(currentDimensionIndex - 1);
+                setCurrentQuestionIndex(QUESTIONS_PER_DIMENSION - 1);
+                setShowDimensionIntro(false);
+                setSelectedOption(null);
+                bumpAnim();
+              }}>
+                &#8592; Previous section
               </button>
             </div>
           )}
@@ -196,20 +157,12 @@ export default function QuizPage() {
       <div style={{ height: 4, backgroundColor: '#ede0ff' }}>
         <div
           className="gradient-bar"
-          style={{
-            width: `${progressPercent}%`,
-            transition: 'width 0.4s cubic-bezier(0.22, 1, 0.36, 1)',
-            height: '100%',
-            borderRadius: 0,
-          }}
+          style={{ width: `${progressPercent}%`, transition: 'width 0.4s cubic-bezier(0.22, 1, 0.36, 1)', height: '100%', borderRadius: 0 }}
         />
       </div>
 
-      {/* Header bar */}
-      <div
-        className="px-6 py-3 flex items-center justify-between"
-        style={{ backgroundColor: '#ffffff', borderBottom: '1px solid #ede0ff' }}
-      >
+      {/* Header */}
+      <div className="px-6 py-3 flex items-center justify-between" style={{ backgroundColor: '#ffffff', borderBottom: '1px solid #ede0ff' }}>
         {/* eslint-disable-next-line @next/next/no-img-element */}
         <img src="/axon-logo-colour.svg" alt="Axon IT" style={{ height: 28, width: 'auto' }} />
         <span className="text-xs" style={{ color: '#a900f1', fontWeight: 400 }}>
@@ -220,61 +173,34 @@ export default function QuizPage() {
       {/* Question area */}
       <div className="flex-1 flex items-start justify-center px-4 py-10">
         <div className="w-full max-w-xl" key={animKey} style={{ willChange: 'transform, opacity' }}>
-          <p
-            className="text-xs uppercase tracking-widest mb-4 anim-fade-right"
-            style={{ color: '#a900f1', fontWeight: 500 }}
-          >
+          <p className="text-xs uppercase tracking-widest mb-4 anim-fade-right" style={{ color: '#a900f1', fontWeight: 500 }}>
             {currentDimension.icon} {currentDimension.label}
           </p>
-
-          <h2
-            className="mb-8 anim-fade-up"
-            style={{ fontSize: 22, fontWeight: 600, color: '#230533', lineHeight: 1.4 }}
-          >
+          <h2 className="mb-8 anim-fade-up" style={{ fontSize: 22, fontWeight: 600, color: '#230533', lineHeight: 1.4 }}>
             {currentQuestion.text}
           </h2>
-
           <OptionList
             key={currentQuestion.id}
             options={currentQuestion.options}
             onSelect={(value) => handleOptionSelect(currentQuestion.id, value)}
-            currentAnswer={answers[currentQuestion.id]}
+            disabled={selectedOption !== null}
+            selectedValue={selectedOption ?? answers[currentQuestion.id]}
           />
         </div>
       </div>
 
-      {/* Bottom navigation */}
-      <div
-        className="px-6 py-4 flex items-center justify-between"
-        style={{ borderTop: '1px solid #ede0ff', backgroundColor: '#fdf5ff' }}
-      >
+      {/* Back button */}
+      <div className="px-6 pb-6 flex items-center justify-between">
         {canGoBack ? (
           <button className="back-btn" onClick={handleBack}>
-            <span style={{ fontSize: 16 }}>&#8592;</span> Back
+            &#8592; Back
           </button>
         ) : (
           <span />
         )}
-
-        <button
-          onClick={handleNext}
-          disabled={!hasCurrentAnswer}
-          className="gradient-bg text-white"
-          style={{
-            height: 44,
-            minWidth: 130,
-            borderRadius: 10,
-            fontSize: 14,
-            fontWeight: 500,
-            border: 'none',
-            cursor: hasCurrentAnswer ? 'pointer' : 'not-allowed',
-            opacity: hasCurrentAnswer ? 1 : 0.35,
-            transition: 'opacity 0.2s ease, transform 0.15s ease',
-            letterSpacing: '0.01em',
-          }}
-        >
-          {isLastQuestion ? 'See Results \u2192' : 'Next \u2192'}
-        </button>
+        <p className="text-xs" style={{ color: '#a900f1', fontWeight: 300 }}>
+          {answeredCount} of {TOTAL_QUESTIONS} answered
+        </p>
       </div>
     </div>
   );
@@ -283,20 +209,22 @@ export default function QuizPage() {
 function OptionList({
   options,
   onSelect,
-  currentAnswer,
+  disabled,
+  selectedValue,
 }: {
   options: { label: string; value: number }[];
   onSelect: (value: number) => void;
-  currentAnswer?: number;
+  disabled: boolean;
+  selectedValue?: number;
 }) {
   return (
     <div className="flex flex-col gap-3">
       {options.map((option, idx) => {
-        const isSelected = currentAnswer === option.value;
+        const isSelected = selectedValue === option.value;
         return (
           <button
             key={idx}
-            onClick={() => onSelect(option.value)}
+            onClick={() => !disabled && onSelect(option.value)}
             className={`option-btn anim-fade-up${isSelected ? ' selected' : ''}`}
             style={{
               animationDelay: `${0.04 + idx * 0.06}s`,
@@ -304,7 +232,7 @@ function OptionList({
               borderRadius: 10,
               border: isSelected ? '2px solid #a900f1' : '1.5px solid #ede0ff',
               backgroundColor: isSelected ? '#f5eaff' : '#ffffff',
-              cursor: 'pointer',
+              cursor: disabled ? 'default' : 'pointer',
               textAlign: 'left',
               fontSize: 14,
               fontWeight: isSelected ? 500 : 300,
