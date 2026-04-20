@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
 import { questions, dimensions } from '@/data/questions';
 
@@ -19,7 +19,6 @@ export default function QuizPage() {
   const [answers, setAnswers] = useState<Record<string, number>>({});
   const [showDimensionIntro, setShowDimensionIntro] = useState(true);
   const [showTransition, setShowTransition] = useState(false);
-  const [selectedOption, setSelectedOption] = useState<number | null>(null);
   const [animKey, setAnimKey] = useState(0);
 
   const currentDimension = dimensions[currentDimensionIndex];
@@ -29,53 +28,52 @@ export default function QuizPage() {
   const answeredCount = Object.keys(answers).length;
   const progressPercent = (answeredCount / TOTAL_QUESTIONS) * 100;
 
-  const canGoBack = !showDimensionIntro && !showTransition &&
-    (currentQuestionIndex > 0 || currentDimensionIndex > 0);
+  const hasCurrentAnswer = currentQuestion && answers[currentQuestion.id] !== undefined;
+  const isLastQuestion =
+    currentDimensionIndex === dimensions.length - 1 &&
+    currentQuestionIndex === QUESTIONS_PER_DIMENSION - 1;
 
-  useEffect(() => {
-    setSelectedOption(null);
-  }, [currentQuestionIndex, currentDimensionIndex]);
+  const canGoBack =
+    !showDimensionIntro &&
+    !showTransition &&
+    (currentQuestionIndex > 0 || currentDimensionIndex > 0);
 
   function bumpAnim() {
     setAnimKey(k => k + 1);
   }
 
   function handleOptionSelect(questionId: string, value: number) {
-    if (selectedOption !== null) return;
-    setSelectedOption(value);
-
-    const newAnswers = { ...answers, [questionId]: value };
-    setAnswers(newAnswers);
-
-    setTimeout(() => {
-      advanceQuiz(newAnswers);
-    }, 150);
+    setAnswers(prev => ({ ...prev, [questionId]: value }));
   }
 
-  function advanceQuiz(newAnswers: Record<string, number>) {
-    const isLastQuestion = currentQuestionIndex >= QUESTIONS_PER_DIMENSION - 1;
-    const isLastDimension = currentDimensionIndex >= dimensions.length - 1;
+  function advanceQuiz(currentAnswers: Record<string, number>) {
+    const lastQ = currentQuestionIndex >= QUESTIONS_PER_DIMENSION - 1;
+    const lastD = currentDimensionIndex >= dimensions.length - 1;
 
-    if (isLastQuestion && isLastDimension) {
+    if (lastQ && lastD) {
       const id = generateId();
-      localStorage.setItem('axon-quiz-result', JSON.stringify({ id, answers: newAnswers }));
+      localStorage.setItem('axon-quiz-result', JSON.stringify({ id, answers: currentAnswers }));
       router.push('/results?id=' + id);
       return;
     }
 
-    if (isLastQuestion) {
+    if (lastQ) {
       setShowTransition(true);
       setTimeout(() => {
         setShowTransition(false);
         setCurrentDimensionIndex(prev => prev + 1);
         setCurrentQuestionIndex(0);
         setShowDimensionIntro(true);
-        setSelectedOption(null);
       }, 700);
     } else {
       setCurrentQuestionIndex(prev => prev + 1);
       bumpAnim();
     }
+  }
+
+  function handleNext() {
+    if (!hasCurrentAnswer) return;
+    advanceQuiz(answers);
   }
 
   const handleBack = useCallback(() => {
@@ -84,14 +82,12 @@ export default function QuizPage() {
       setCurrentQuestionIndex(prev => prev - 1);
       bumpAnim();
     } else {
-      // Go back to previous dimension's last question
       const prevDimIndex = currentDimensionIndex - 1;
       setCurrentDimensionIndex(prevDimIndex);
       setCurrentQuestionIndex(QUESTIONS_PER_DIMENSION - 1);
       setShowDimensionIntro(false);
       bumpAnim();
     }
-    setSelectedOption(null);
   }, [canGoBack, currentQuestionIndex, currentDimensionIndex]);
 
   // Transition screen
@@ -123,7 +119,6 @@ export default function QuizPage() {
         style={{ backgroundColor: '#230533' }}
       >
         <div className="w-full max-w-lg text-center anim-fade">
-          {/* Icon with glow */}
           <div className="relative inline-flex items-center justify-center mb-6 anim-scale">
             <div className="glow-ring" />
             <span className="anim-float" style={{ fontSize: 72, display: 'block' }}>
@@ -131,10 +126,8 @@ export default function QuizPage() {
             </span>
           </div>
 
-          {/* Gradient bar */}
           <div className="gradient-bar mx-auto mb-6 anim-fade-up delay-100" style={{ width: 64 }} />
 
-          {/* Heading */}
           <h2
             className="mb-4 anim-fade-up delay-200"
             style={{ fontSize: 36, fontWeight: 600, color: '#ffffff', lineHeight: 1.2 }}
@@ -142,7 +135,6 @@ export default function QuizPage() {
             {currentDimension.label}
           </h2>
 
-          {/* Description */}
           <p
             className="mb-3 anim-fade-up delay-300"
             style={{ fontSize: 16, fontWeight: 300, color: '#b0b8c8', lineHeight: 1.65 }}
@@ -150,7 +142,6 @@ export default function QuizPage() {
             {currentDimension.description}
           </p>
 
-          {/* Question count */}
           <p
             className="mb-10 anim-fade-up delay-400"
             style={{ fontSize: 13, color: '#a900f1', fontWeight: 400 }}
@@ -158,7 +149,6 @@ export default function QuizPage() {
             {QUESTIONS_PER_DIMENSION} questions
           </p>
 
-          {/* CTA */}
           <div className="anim-fade-up delay-500">
             <button
               onClick={() => setShowDimensionIntro(false)}
@@ -178,7 +168,6 @@ export default function QuizPage() {
             </button>
           </div>
 
-          {/* Back to previous dimension */}
           {currentDimensionIndex > 0 && (
             <div className="mt-6 anim-fade delay-500">
               <button
@@ -231,7 +220,6 @@ export default function QuizPage() {
       {/* Question area */}
       <div className="flex-1 flex items-start justify-center px-4 py-10">
         <div className="w-full max-w-xl" key={animKey} style={{ willChange: 'transform, opacity' }}>
-          {/* Dimension label */}
           <p
             className="text-xs uppercase tracking-widest mb-4 anim-fade-right"
             style={{ color: '#a900f1', fontWeight: 500 }}
@@ -239,7 +227,6 @@ export default function QuizPage() {
             {currentDimension.icon} {currentDimension.label}
           </p>
 
-          {/* Question text */}
           <h2
             className="mb-8 anim-fade-up"
             style={{ fontSize: 22, fontWeight: 600, color: '#230533', lineHeight: 1.4 }}
@@ -251,14 +238,16 @@ export default function QuizPage() {
             key={currentQuestion.id}
             options={currentQuestion.options}
             onSelect={(value) => handleOptionSelect(currentQuestion.id, value)}
-            disabled={selectedOption !== null}
             currentAnswer={answers[currentQuestion.id]}
           />
         </div>
       </div>
 
-      {/* Bottom navigation row */}
-      <div className="px-6 pb-6 flex items-center justify-between">
+      {/* Bottom navigation */}
+      <div
+        className="px-6 py-4 flex items-center justify-between"
+        style={{ borderTop: '1px solid #ede0ff', backgroundColor: '#fdf5ff' }}
+      >
         {canGoBack ? (
           <button className="back-btn" onClick={handleBack}>
             <span style={{ fontSize: 16 }}>&#8592;</span> Back
@@ -266,9 +255,26 @@ export default function QuizPage() {
         ) : (
           <span />
         )}
-        <p className="text-xs" style={{ color: '#a900f1', fontWeight: 300 }}>
-          Question {answeredCount + 1} of {TOTAL_QUESTIONS}
-        </p>
+
+        <button
+          onClick={handleNext}
+          disabled={!hasCurrentAnswer}
+          className="gradient-bg text-white"
+          style={{
+            height: 44,
+            minWidth: 130,
+            borderRadius: 10,
+            fontSize: 14,
+            fontWeight: 500,
+            border: 'none',
+            cursor: hasCurrentAnswer ? 'pointer' : 'not-allowed',
+            opacity: hasCurrentAnswer ? 1 : 0.35,
+            transition: 'opacity 0.2s ease, transform 0.15s ease',
+            letterSpacing: '0.01em',
+          }}
+        >
+          {isLastQuestion ? 'See Results \u2192' : 'Next \u2192'}
+        </button>
       </div>
     </div>
   );
@@ -277,41 +283,20 @@ export default function QuizPage() {
 function OptionList({
   options,
   onSelect,
-  disabled,
   currentAnswer,
 }: {
   options: { label: string; value: number }[];
   onSelect: (value: number) => void;
-  disabled: boolean;
   currentAnswer?: number;
 }) {
-  const [selectedIdx, setSelectedIdx] = useState<number | null>(null);
-
-  useEffect(() => {
-    // If there's a previously stored answer for this question, show it selected
-    if (currentAnswer !== undefined) {
-      const idx = options.findIndex(o => o.value === currentAnswer);
-      setSelectedIdx(idx >= 0 ? idx : null);
-    } else {
-      setSelectedIdx(null);
-    }
-  }, [options, currentAnswer]);
-
-  function handleClick(idx: number, value: number) {
-    if (disabled || selectedIdx !== null) return;
-    setSelectedIdx(idx);
-    onSelect(value);
-  }
-
   return (
     <div className="flex flex-col gap-3">
       {options.map((option, idx) => {
-        const isSelected = selectedIdx === idx;
+        const isSelected = currentAnswer === option.value;
         return (
           <button
             key={idx}
-            onClick={() => handleClick(idx, option.value)}
-            disabled={disabled}
+            onClick={() => onSelect(option.value)}
             className={`option-btn anim-fade-up${isSelected ? ' selected' : ''}`}
             style={{
               animationDelay: `${0.04 + idx * 0.06}s`,
@@ -319,11 +304,11 @@ function OptionList({
               borderRadius: 10,
               border: isSelected ? '2px solid #a900f1' : '1.5px solid #ede0ff',
               backgroundColor: isSelected ? '#f5eaff' : '#ffffff',
-              cursor: disabled ? 'default' : 'pointer',
+              cursor: 'pointer',
               textAlign: 'left',
               fontSize: 14,
               fontWeight: isSelected ? 500 : 300,
-              color: isSelected ? '#230533' : '#230533',
+              color: '#230533',
               lineHeight: 1.45,
             }}
           >
