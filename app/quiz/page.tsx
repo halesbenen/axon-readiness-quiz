@@ -192,7 +192,21 @@ export default function QuizPage() {
       {/* Back button */}
       <div className="px-6 pb-6 flex items-center justify-between">
         {canGoBack ? (
-          <button className="back-btn" onClick={handleBack}>
+          <button
+            onClick={handleBack}
+            className="gradient-bg inline-flex items-center gap-2 text-white"
+            style={{
+              height: 44,
+              minWidth: 110,
+              borderRadius: 10,
+              fontSize: 14,
+              fontWeight: 500,
+              border: 'none',
+              cursor: 'pointer',
+              letterSpacing: '0.01em',
+              paddingInline: 20,
+            }}
+          >
             &#8592; Back
           </button>
         ) : (
