@@ -84,9 +84,6 @@ export default function ResultsPage() {
             <span style={{ fontSize: 56, fontWeight: 700, color: '#ffffff', lineHeight: 1 }}>{result.overallScore}</span>
             <span style={{ fontSize: 24, fontWeight: 300, color: '#ffffff', opacity: 0.6 }}> / 5</span>
           </div>
-          <h1 className="mb-6" style={{ fontSize: 36, fontWeight: 600, color: '#ffffff', lineHeight: 1.2 }}>
-            {result.overallTierLabel}
-          </h1>
           <p style={{ fontSize: 16, fontWeight: 300, color: '#64dfec', lineHeight: 1.7, maxWidth: 620, margin: '0 auto' }}>
             {result.overallDescription}
           </p>
