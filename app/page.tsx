@@ -64,6 +64,19 @@ export default function Home() {
         >
           Covers: People · Process · Data · Tools · Ambition
         </p>
+
+        <Link
+          href="/dashboard"
+          style={{
+            fontSize: 11,
+            color: "rgba(255,255,255,0.2)",
+            marginTop: 48,
+            fontWeight: 400,
+            textDecoration: "none",
+          }}
+        >
+          Staff Area →
+        </Link>
       </div>
 
       <style>{`

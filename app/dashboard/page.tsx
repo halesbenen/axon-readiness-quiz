@@ -20,9 +20,14 @@ function timeAgo(iso: string): string {
   return `${Math.floor(hrs / 24)}d ago`;
 }
 
+function formatDate(iso: string): string {
+  return new Date(iso).toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' });
+}
+
 export default function DashboardPage() {
   const [assessments, setAssessments] = useState<AssessmentMeta[]>([]);
   const [loading, setLoading] = useState(true);
+  const [deleting, setDeleting] = useState<string | null>(null);
   const router = useRouter();
 
   useEffect(() => {
@@ -34,6 +39,18 @@ export default function DashboardPage() {
       })
       .catch(() => setLoading(false));
   }, []);
+
+  async function handleDelete(e: React.MouseEvent, id: string, name: string) {
+    e.stopPropagation();
+    if (!confirm(`Delete "${name}"? This cannot be undone.`)) return;
+    setDeleting(id);
+    try {
+      await fetch(`/api/assessments/${id}`, { method: 'DELETE' });
+      setAssessments(prev => prev.filter(a => a.id !== id));
+    } finally {
+      setDeleting(null);
+    }
+  }
 
   return (
     <div style={{ backgroundColor: '#fdf5ff', minHeight: '100%' }}>
@@ -92,6 +109,7 @@ export default function DashboardPage() {
                   gap: 16,
                   cursor: 'pointer',
                   transition: 'border-color 0.15s',
+                  opacity: deleting === a.id ? 0.4 : 1,
                 }}
                 onMouseEnter={e => (e.currentTarget.style.borderColor = '#a900f1')}
                 onMouseLeave={e => (e.currentTarget.style.borderColor = '#ede0ff')}
@@ -101,7 +119,7 @@ export default function DashboardPage() {
                     {a.companyName}
                   </p>
                   <p style={{ fontSize: 11, color: 'rgba(35,5,51,0.45)', fontWeight: 300 }}>
-                    {timeAgo(a.createdAt)}
+                    {a.completedAt ? `Completed ${formatDate(a.completedAt)}` : `Started ${timeAgo(a.createdAt)}`}
                   </p>
                 </div>
                 <div style={{ display: 'flex', gap: 8, alignItems: 'center', flexShrink: 0 }}>
@@ -130,6 +148,26 @@ export default function DashboardPage() {
                     </span>
                   )}
                   <span style={{ color: '#a900f1', opacity: 0.5, fontSize: 16 }}>›</span>
+                  <button
+                    onClick={e => handleDelete(e, a.id, a.companyName)}
+                    disabled={deleting === a.id}
+                    title="Delete assessment"
+                    style={{
+                      background: 'none',
+                      border: 'none',
+                      cursor: 'pointer',
+                      color: 'rgba(35,5,51,0.25)',
+                      fontSize: 16,
+                      lineHeight: 1,
+                      padding: '2px 4px',
+                      borderRadius: 4,
+                      transition: 'color 0.15s',
+                    }}
+                    onMouseEnter={e => (e.currentTarget.style.color = '#ff1d79')}
+                    onMouseLeave={e => (e.currentTarget.style.color = 'rgba(35,5,51,0.25)')}
+                  >
+                    ×
+                  </button>
                 </div>
               </div>
             ))}

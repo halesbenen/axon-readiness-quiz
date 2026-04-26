@@ -7,6 +7,7 @@ export interface AssessmentMeta {
   overallScore: number;
   overallTierLabel: string;
   createdAt: string;
+  completedAt?: string;
 }
 
 export interface AssessmentRecord {
@@ -14,6 +15,7 @@ export interface AssessmentRecord {
   answers: Record<string, number>;
   result: QuizResult | null;
   createdAt: string;
+  completedAt?: string;
 }
 
 const INDEX_KEY = 'readiness-index';
@@ -57,6 +59,12 @@ export async function getAssessment(id: string): Promise<AssessmentRecord | null
   return kv.get<AssessmentRecord>(recordKey(id));
 }
 
+export async function deleteAssessment(id: string): Promise<void> {
+  await kv.del(recordKey(id));
+  const index = await listAssessments();
+  await kv.set(INDEX_KEY, index.filter(m => m.id !== id));
+}
+
 export async function saveAssessment(
   id: string,
   answers: Record<string, number>,
@@ -65,13 +73,14 @@ export async function saveAssessment(
   const existing = await getAssessment(id);
   if (!existing) return;
 
-  const updated: AssessmentRecord = { ...existing, answers, result };
+  const completedAt = new Date().toISOString();
+  const updated: AssessmentRecord = { ...existing, answers, result, completedAt };
   await kv.set(recordKey(id), updated);
 
   const index = await listAssessments();
   const newIndex = index.map(m =>
     m.id === id
-      ? { ...m, overallScore: result.overallScore, overallTierLabel: result.overallTierLabel }
+      ? { ...m, overallScore: result.overallScore, overallTierLabel: result.overallTierLabel, completedAt }
       : m
   );
   await kv.set(INDEX_KEY, newIndex);
