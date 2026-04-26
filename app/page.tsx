@@ -68,11 +68,19 @@ export default function Home() {
         <Link
           href="/dashboard"
           style={{
-            fontSize: 11,
-            color: "rgba(255,255,255,0.2)",
             marginTop: 48,
-            fontWeight: 400,
+            display: "inline-flex",
+            alignItems: "center",
+            justifyContent: "center",
+            height: 44,
+            padding: "0 24px",
+            borderRadius: 8,
+            border: "1.5px solid rgba(255,255,255,0.18)",
+            fontSize: 13,
+            fontWeight: 500,
+            color: "rgba(255,255,255,0.6)",
             textDecoration: "none",
+            background: "rgba(255,255,255,0.06)",
           }}
         >
           Staff Area →
