@@ -18,7 +18,7 @@ export default function QuizPage() {
   const [answers, setAnswers] = useState<Record<string, number>>({});
   const [showDimensionIntro, setShowDimensionIntro] = useState(true);
   const [showTransition, setShowTransition] = useState(false);
-  const [selectedOption, setSelectedOption] = useState<number | null>(null);
+  const [selectedOptionIndex, setSelectedOptionIndex] = useState<number | null>(null);
   const [animKey, setAnimKey] = useState(0);
 
   const currentDimension = dimensions[currentDimensionIndex];
@@ -28,16 +28,16 @@ export default function QuizPage() {
   const answeredCount = Object.keys(answers).length;
   const progressPercent = (answeredCount / TOTAL_QUESTIONS) * 100;
 
-  const canGoBack = !showDimensionIntro && !showTransition &&
+  const canGoBack = !showDimensionIntro && !showTransition && selectedOptionIndex === null &&
     (currentQuestionIndex > 0 || currentDimensionIndex > 0);
 
   function bumpAnim() {
     setAnimKey(k => k + 1);
   }
 
-  function handleOptionSelect(questionId: string, value: number) {
-    if (selectedOption !== null) return;
-    setSelectedOption(value);
+  function handleOptionSelect(questionId: string, value: number, optionIndex: number) {
+    if (selectedOptionIndex !== null) return;
+    setSelectedOptionIndex(optionIndex);
     const newAnswers = { ...answers, [questionId]: value };
     setAnswers(newAnswers);
     setTimeout(() => advanceQuiz(newAnswers), 150);
@@ -69,18 +69,18 @@ export default function QuizPage() {
         setCurrentDimensionIndex(prev => prev + 1);
         setCurrentQuestionIndex(0);
         setShowDimensionIntro(true);
-        setSelectedOption(null);
+        setSelectedOptionIndex(null);
       }, 700);
     } else {
       setCurrentQuestionIndex(prev => prev + 1);
-      setSelectedOption(null);
+      setSelectedOptionIndex(null);
       bumpAnim();
     }
   }
 
   const handleBack = useCallback(() => {
     if (!canGoBack) return;
-    setSelectedOption(null);
+    setSelectedOptionIndex(null);
     if (currentQuestionIndex > 0) {
       setCurrentQuestionIndex(prev => prev - 1);
       bumpAnim();
@@ -145,7 +145,7 @@ export default function QuizPage() {
                 setCurrentDimensionIndex(currentDimensionIndex - 1);
                 setCurrentQuestionIndex(QUESTIONS_PER_DIMENSION - 1);
                 setShowDimensionIntro(false);
-                setSelectedOption(null);
+                setSelectedOptionIndex(null);
                 bumpAnim();
               }}>
                 ← Previous section
@@ -189,9 +189,10 @@ export default function QuizPage() {
           <OptionList
             key={currentQuestion.id}
             options={currentQuestion.options}
-            onSelect={(value) => handleOptionSelect(currentQuestion.id, value)}
-            disabled={selectedOption !== null}
-            selectedValue={selectedOption ?? answers[currentQuestion.id]}
+            onSelect={(value, index) => handleOptionSelect(currentQuestion.id, value, index)}
+            disabled={selectedOptionIndex !== null}
+            selectedIndex={selectedOptionIndex}
+            selectedValue={answers[currentQuestion.id]}
           />
         </div>
       </div>
@@ -226,20 +227,24 @@ function OptionList({
   onSelect,
   disabled,
   selectedValue,
+  selectedIndex,
 }: {
   options: { label: string; value: number }[];
-  onSelect: (value: number) => void;
+  onSelect: (value: number, index: number) => void;
   disabled: boolean;
   selectedValue?: number;
+  selectedIndex?: number | null;
 }) {
   return (
     <div className="flex flex-col gap-3">
       {options.map((option, idx) => {
-        const isSelected = selectedValue === option.value;
+        const isSelected = selectedIndex != null
+          ? selectedIndex === idx
+          : selectedValue === option.value;
         return (
           <button
             key={idx}
-            onClick={() => !disabled && onSelect(option.value)}
+            onClick={() => !disabled && onSelect(option.value, idx)}
             className={`option-btn anim-fade-up${isSelected ? ' selected' : ''}`}
             style={{
               animationDelay: `${0.04 + idx * 0.06}s`,

@@ -1,7 +1,9 @@
 import { NextResponse } from 'next/server';
 import type { NextRequest } from 'next/server';
 import { jwtVerify } from 'jose';
-import { COOKIE_NAME } from '@/lib/auth';
+
+// Inlined from lib/auth to keep the Edge proxy bundle free of local imports.
+const COOKIE_NAME = 'quiz_session';
 
 function getSecret(): Uint8Array {
   return new TextEncoder().encode(process.env.QUIZ_SECRET ?? '');
