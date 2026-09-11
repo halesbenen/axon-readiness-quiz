@@ -1,5 +1,10 @@
-import { kv } from '@vercel/kv';
+import { Redis } from '@upstash/redis';
 import type { QuizResult } from '@/lib/scoring';
+
+const kv = new Redis({
+  url: process.env.KV_REST_API_URL!,
+  token: process.env.KV_REST_API_TOKEN!,
+});
 
 export interface AssessmentMeta {
   id: string;

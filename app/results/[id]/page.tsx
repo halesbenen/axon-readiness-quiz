@@ -6,8 +6,8 @@ import type { QuizResult, ReadinessTier } from '@/lib/scoring';
 import type { AssessmentRecord } from '@/lib/kv';
 
 function tierColor(tier: ReadinessTier): string {
-  if (tier === 'ready') return '#10b981';
-  if (tier === 'developing') return '#f59e0b';
+  if (tier === 'ready') return '#64dfec';
+  if (tier === 'developing') return '#a900f1';
   return '#ff1d79';
 }
 
@@ -36,7 +36,7 @@ export default function ResultsPage() {
 
   if (error) {
     return (
-      <div className="flex-1 flex items-center justify-center" style={{ backgroundColor: '#fdf5ff' }}>
+      <div className="flex-1 flex items-center justify-center" style={{ backgroundColor: '#ffffff' }}>
         <div className="text-center max-w-md px-6">
           <p style={{ color: '#230533', fontSize: 18, marginBottom: 16 }}>{error}</p>
           <a
@@ -53,16 +53,16 @@ export default function ResultsPage() {
 
   if (!result) {
     return (
-      <div className="flex-1 flex items-center justify-center" style={{ backgroundColor: '#fdf5ff' }}>
+      <div className="flex-1 flex items-center justify-center" style={{ backgroundColor: '#ffffff' }}>
         <p style={{ color: '#a900f1', fontSize: 14 }}>Loading your results...</p>
       </div>
     );
   }
 
   const overallColor = result.overallTier === 'ai-forward' || result.overallTier === 'ready-to-build'
-    ? '#10b981'
+    ? '#64dfec'
     : result.overallTier === 'building-foundations'
-    ? '#f59e0b'
+    ? '#a900f1'
     : '#ff1d79';
 
   return (
@@ -100,7 +100,7 @@ export default function ResultsPage() {
               const color = tierColor(dim.tier);
               const barWidth = ((dim.score - 1) / 4) * 100;
               return (
-                <div key={dim.id} style={{ border: '1px solid #ede0ff', borderRadius: 12, padding: 24, backgroundColor: '#fdf5ff' }}>
+                <div key={dim.id} style={{ border: '1px solid rgba(169,0,241,0.18)', borderRadius: 12, padding: 24, backgroundColor: 'rgba(255,29,121,0.06)' }}>
                   <div className="flex items-center justify-between mb-3">
                     <div className="flex items-center gap-3">
                       <span style={{ fontSize: 28 }}>{dim.icon}</span>
@@ -113,7 +113,7 @@ export default function ResultsPage() {
                       </span>
                     </div>
                   </div>
-                  <div style={{ height: 6, backgroundColor: '#ede0ff', borderRadius: 3, marginBottom: 16 }}>
+                  <div style={{ height: 6, backgroundColor: 'rgba(169,0,241,0.18)', borderRadius: 3, marginBottom: 16 }}>
                     <div style={{ height: '100%', width: `${barWidth}%`, backgroundColor: color, borderRadius: 3, transition: 'width 0.6s ease' }} />
                   </div>
                   <p style={{ fontSize: 13, fontWeight: 300, color: '#230533', lineHeight: 1.6, marginBottom: 12 }}>
@@ -133,7 +133,7 @@ export default function ResultsPage() {
       </section>
 
       {/* 3. CTA */}
-      <section style={{ backgroundColor: '#fdf5ff' }} className="px-6 py-16">
+      <section style={{ backgroundColor: 'rgba(255,29,121,0.06)' }} className="px-6 py-16">
         <div className="max-w-2xl mx-auto text-center">
           <div className="gradient-bar mx-auto mb-8" style={{ width: 80 }} />
           <h2 className="mb-4" style={{ fontSize: 28, fontWeight: 600, color: '#230533' }}>

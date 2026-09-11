@@ -71,8 +71,8 @@ const EXAMPLE_RESULT: QuizResult = {
 };
 
 function tierColor(tier: ReadinessTier): string {
-  if (tier === 'ready') return '#10b981';
-  if (tier === 'developing') return '#f59e0b';
+  if (tier === 'ready') return '#64dfec';
+  if (tier === 'developing') return '#a900f1';
   return '#ff1d79';
 }
 
@@ -81,9 +81,9 @@ export default function ExampleResultPage() {
 
   const overallColor =
     result.overallTier === 'ai-forward' || result.overallTier === 'ready-to-build'
-      ? '#10b981'
+      ? '#64dfec'
       : result.overallTier === 'building-foundations'
-      ? '#f59e0b'
+      ? '#a900f1'
       : '#ff1d79';
 
   return (
@@ -92,7 +92,7 @@ export default function ExampleResultPage() {
       {/* Sample banner */}
       <div
         style={{
-          backgroundColor: '#f59e0b',
+          backgroundColor: '#64dfec',
           color: '#230533',
           fontSize: 12,
           fontWeight: 500,
@@ -164,10 +164,10 @@ export default function ExampleResultPage() {
                 <div
                   key={dim.id}
                   style={{
-                    border: '1px solid #ede0ff',
+                    border: '1px solid rgba(169,0,241,0.18)',
                     borderRadius: 12,
                     padding: 24,
-                    backgroundColor: '#fdf5ff',
+                    backgroundColor: 'rgba(255,29,121,0.06)',
                   }}
                 >
                   <div className="flex items-center justify-between mb-3">
@@ -186,7 +186,7 @@ export default function ExampleResultPage() {
                     </div>
                   </div>
 
-                  <div style={{ height: 6, backgroundColor: '#ede0ff', borderRadius: 3, marginBottom: 16 }}>
+                  <div style={{ height: 6, backgroundColor: 'rgba(169,0,241,0.18)', borderRadius: 3, marginBottom: 16 }}>
                     <div
                       style={{
                         height: '100%',
@@ -220,7 +220,7 @@ export default function ExampleResultPage() {
       </section>
 
       {/* 3. CTA section */}
-      <section style={{ backgroundColor: '#fdf5ff' }} className="px-6 py-16">
+      <section style={{ backgroundColor: 'rgba(255,29,121,0.06)' }} className="px-6 py-16">
         <div className="max-w-2xl mx-auto text-center">
           <div className="gradient-bar mx-auto mb-8" style={{ width: 80 }} />
 

@@ -2,142 +2,41 @@ import Link from "next/link";
 
 export default function Home() {
   return (
-    <div className="lsplash">
-      <div className="lband" />
-      <div className="lpill lp1" /><div className="lpill lp2" /><div className="lpill lp3" />
-      <div className="lpill lp4" /><div className="lpill lp5" /><div className="lpill lp6" />
-      <div className="lpill lp7" /><div className="lpill lp8" /><div className="lpill lp9" />
-      <div className="lghost">READY</div>
-
-      <div className="lcontent flex flex-col items-center text-center max-w-xl px-6">
-        {/* eslint-disable-next-line @next/next/no-img-element */}
-        <img
-          src="/axon-logo-whiteout.svg"
-          alt="Axon IT"
-          style={{ width: 120, height: "auto", marginBottom: 24 }}
-        />
-
-        <div className="gradient-bar" style={{ width: 80, marginBottom: 32 }} />
-
-        <h1
-          className="text-3xl"
-          style={{ fontWeight: 600, color: "#ffffff", marginBottom: 16, lineHeight: 1.25 }}
-        >
-          Is Your Business Ready for AI?
-        </h1>
-
-        <p
-          style={{
-            fontSize: 16,
-            fontWeight: 300,
-            color: "#64dfec",
-            marginBottom: 40,
-            lineHeight: 1.65,
-          }}
-        >
-          Answer 30 questions and get a personalised breakdown of your AI &amp; Automation
-          readiness, free, in 10 minutes.
-        </p>
-
-        <Link
-          href="/quiz"
-          className="gradient-bg inline-flex items-center justify-center text-white"
-          style={{
-            height: 48,
-            width: 220,
-            borderRadius: 8,
-            fontSize: 15,
-            fontWeight: 500,
-            textDecoration: "none",
-          }}
-        >
-          Start the assessment →
-        </Link>
-
-        <p
-          style={{
-            fontSize: 12,
-            color: "#a900f1",
-            marginTop: 20,
-            fontWeight: 400,
-          }}
-        >
-          Covers: People · Process · Data · Tools · Ambition
-        </p>
-
-        <Link
-          href="/dashboard"
-          style={{
-            marginTop: 48,
-            display: "inline-flex",
-            alignItems: "center",
-            justifyContent: "center",
-            height: 44,
-            padding: "0 24px",
-            borderRadius: 8,
-            border: "1.5px solid rgba(255,255,255,0.18)",
-            fontSize: 13,
-            fontWeight: 500,
-            color: "rgba(255,255,255,0.6)",
-            textDecoration: "none",
-            background: "rgba(255,255,255,0.06)",
-          }}
-        >
-          Staff Area →
-        </Link>
+    <div className="relative isolate flex min-h-[calc(100vh-121px)] items-center overflow-hidden bg-[#230533] px-6 py-14 sm:px-10 lg:px-16">
+      <div className="brand-orb absolute -left-52 top-1/2 h-[38rem] w-[38rem] -translate-y-1/2 rounded-full" />
+      <div
+        className="absolute inset-0 opacity-35"
+        style={{ backgroundImage: "url('/axon-brand/axon-gradient-1.png')", backgroundSize: "cover", backgroundPosition: "center" }}
+      />
+      <div className="relative z-10 mx-auto grid w-full max-w-6xl items-center gap-10 lg:grid-cols-[1.05fr_0.95fr] lg:gap-16">
+        <div className="max-w-2xl">
+          <p className="mb-5 text-xs font-medium uppercase tracking-[0.18em] text-[#64dfec]">AI infrastructure readiness</p>
+          <h1 className="mb-6 text-4xl font-semibold tracking-[-0.045em] text-white sm:text-5xl lg:text-6xl" style={{ lineHeight: 1.04 }}>
+            Find your strongest path to practical AI.
+          </h1>
+          <p className="mb-8 max-w-xl text-base font-light leading-7 text-white/80 sm:text-lg">
+            In ten minutes, see how ready your organisation is to implement AI and automation — and where to focus first.
+          </p>
+          <div className="flex flex-col gap-4 sm:flex-row sm:items-center">
+            <Link href="/quiz" className="gradient-bg inline-flex h-12 items-center justify-center rounded-lg px-7 text-sm font-semibold text-white no-underline">
+              Start the free assessment <span aria-hidden="true" className="ml-2">→</span>
+            </Link>
+            <span className="text-sm font-medium text-[#64dfec]">30 questions · Personalised results</span>
+          </div>
+          <Link href="/dashboard" className="mt-10 inline-flex text-sm text-white/55 underline decoration-white/25 underline-offset-4 hover:text-white">
+            Staff area →
+          </Link>
+        </div>
+        <div className="hero-panel relative mx-auto w-full max-w-md overflow-hidden rounded-3xl p-5 sm:p-8">
+          <div className="absolute -right-24 -top-24 h-48 w-48 rounded-full bg-[#64dfec]/15 blur-3xl" />
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img src="/axon-brand/readiness-visual.png" alt="Abstract Axon illustration representing connected digital systems" className="hero-art relative mx-auto w-full max-w-sm" />
+          <div className="relative mt-1 rounded-2xl border border-white/15 bg-[#230533]/70 p-5">
+            <p className="text-xs font-medium uppercase tracking-[0.14em] text-[#64dfec]">Your assessment covers</p>
+            <p className="mt-3 text-sm leading-6 text-white/85">People, process, data, tools and ambition — the foundations for an AI programme that delivers.</p>
+          </div>
+        </div>
       </div>
-
-      <style>{`
-        .lsplash {
-          position: relative;
-          min-height: 100vh;
-          background: #230533;
-          overflow: hidden;
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          padding: 64px 0;
-        }
-        .lband {
-          position: absolute;
-          top: 0; left: 0; right: 0;
-          height: 52%;
-          background: linear-gradient(145deg, #ff1d79 0%, #a900f1 50%, #3900ce 100%);
-          z-index: 0;
-        }
-        .lband::after {
-          content: '';
-          position: absolute;
-          bottom: -2px; left: 0; right: 0;
-          height: 80px;
-          background: #230533;
-          clip-path: polygon(0 100%, 100% 0, 100% 100%);
-        }
-        .lpill { position: absolute; border-radius: 100px; }
-        .lp1 { width: 400px; height: 120px; background: rgba(255,255,255,0.07);  top: -32px;   right: -80px;  transform: rotate(-18deg); z-index: 1; }
-        .lp2 { width: 220px; height: 66px;  background: rgba(100,223,236,0.14); top: 60px;    right: 60px;   transform: rotate(12deg);  z-index: 1; }
-        .lp3 { width: 160px; height: 48px;  background: rgba(255,255,255,0.06); top: 140px;   right: 220px;  transform: rotate(-6deg);  z-index: 1; }
-        .lp4 { width: 90px;  height: 28px;  background: rgba(255,29,121,0.22);  top: 48px;    left: 180px;   transform: rotate(24deg);  z-index: 1; }
-        .lp5 { width: 300px; height: 90px;  background: rgba(57,0,206,0.20);    bottom: 180px; left: -50px;  transform: rotate(-10deg); z-index: 1; }
-        .lp6 { width: 130px; height: 40px;  background: rgba(100,223,236,0.10); bottom: 240px; left: 200px;  transform: rotate(8deg);   z-index: 1; }
-        .lp7 { width: 60px;  height: 18px;  background: rgba(255,255,255,0.08); bottom: 320px; right: 80px;  transform: rotate(-28deg); z-index: 1; }
-        .lp8 { width: 200px; height: 60px;  background: rgba(169,0,241,0.16);   bottom: 120px; right: -30px; transform: rotate(15deg);  z-index: 1; }
-        .lp9 { width: 70px;  height: 22px;  background: rgba(255,29,121,0.18);  top: 200px;    left: 44px;   transform: rotate(-14deg); z-index: 1; }
-        .lghost {
-          position: absolute;
-          bottom: 40px; right: -20px;
-          font-size: clamp(80px, 18vw, 160px);
-          font-weight: 600;
-          color: rgba(169,0,241,0.06);
-          letter-spacing: -0.05em;
-          line-height: 1;
-          white-space: nowrap;
-          z-index: 0;
-          user-select: none;
-          pointer-events: none;
-        }
-        .lcontent { position: relative; z-index: 2; }
-      `}</style>
     </div>
   );
 }

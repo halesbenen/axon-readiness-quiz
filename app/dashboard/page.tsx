@@ -5,8 +5,8 @@ import { useRouter } from 'next/navigation';
 import type { AssessmentMeta } from '@/lib/kv';
 
 function tierColor(label: string): string {
-  if (label === 'AI-Forward' || label === 'Ready to Build') return '#10b981';
-  if (label === 'Building Foundations') return '#f59e0b';
+  if (label === 'AI-Forward' || label === 'Ready to Build') return '#64dfec';
+  if (label === 'Building Foundations') return '#a900f1';
   if (label === 'Early Stage') return '#ff1d79';
   return '#a900f1';
 }
@@ -53,7 +53,7 @@ export default function DashboardPage() {
   }
 
   return (
-    <div style={{ backgroundColor: '#fdf5ff', minHeight: '100%' }}>
+    <div style={{ backgroundColor: '#ffffff', minHeight: '100%' }}>
       <div style={{ maxWidth: 800, margin: '0 auto', padding: '36px 32px' }}>
 
         {/* Header */}
@@ -101,7 +101,7 @@ export default function DashboardPage() {
                 onClick={() => router.push(`/results/${a.id}`)}
                 style={{
                   background: '#fff',
-                  border: '1px solid #ede0ff',
+                  border: '1px solid rgba(169,0,241,0.18)',
                   borderRadius: 10,
                   padding: '14px 16px',
                   display: 'flex',
@@ -112,7 +112,7 @@ export default function DashboardPage() {
                   opacity: deleting === a.id ? 0.4 : 1,
                 }}
                 onMouseEnter={e => (e.currentTarget.style.borderColor = '#a900f1')}
-                onMouseLeave={e => (e.currentTarget.style.borderColor = '#ede0ff')}
+                onMouseLeave={e => (e.currentTarget.style.borderColor = 'rgba(169,0,241,0.18)')}
               >
                 <div style={{ flex: 1, minWidth: 0 }}>
                   <p style={{ fontSize: 14, fontWeight: 500, color: '#230533', marginBottom: 2, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>

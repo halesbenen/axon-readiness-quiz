@@ -40,6 +40,7 @@ export default function QuizInterstitial() {
           onKeyDown={e => { if (e.key === 'Enter' && !loading) handleStart(companyName); }}
           placeholder="Company name"
           autoFocus
+          className="brand-input"
           style={{
             width: '100%',
             background: 'rgba(255,255,255,0.06)',

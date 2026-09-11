@@ -6,22 +6,41 @@
   --color-axon-violet: #a900f1;
   --color-axon-blue: #3900ce;
   --color-axon-cyan: #64dfec;
-  --color-axon-light: #fdf5ff;
-  --color-axon-border: #ede0ff;
-  --color-ready: #10b981;
-  --color-developing: #f59e0b;
+  --color-axon-light: #ffffff;
+  --color-axon-border: rgba(169, 0, 241, 0.18);
+  --color-ready: #64dfec;
+  --color-developing: #a900f1;
   --color-not-ready: #ff1d79;
 }
+
+* { box-sizing: border-box; }
+
+html { background: #230533; }
 
 body {
   background: #ffffff;
   color: #230533;
 }
 
+.site-header,
+.site-footer { background: #230533; }
+
+.site-header { border-bottom: 1px solid rgba(255, 255, 255, 0.1); }
+
+.eyebrow,
+.footer-link {
+  color: #64dfec;
+  font-size: 0.7rem;
+  font-weight: 500;
+  letter-spacing: 0.11em;
+  text-decoration: none;
+  text-transform: uppercase;
+}
+
 /* ─── Gradient utilities ─────────────────────────── */
 
 .gradient-text {
-  background: linear-gradient(90deg, #ff1d79, #a900f1, #64dfec);
+  background: linear-gradient(90deg, #ff1d79, #a900f1, #3900ce);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
@@ -29,12 +48,12 @@ body {
 
 .gradient-bar {
   height: 3px;
-  background: linear-gradient(90deg, #ff1d79, #a900f1, #64dfec);
+  background: linear-gradient(90deg, #ff1d79, #a900f1, #3900ce);
   border-radius: 2px;
 }
 
 .gradient-bg {
-  background: linear-gradient(135deg, #ff1d79 0%, #a900f1 50%, #3900ce 100%);
+  background: linear-gradient(135deg, #ff1d79 0%, #a900f1 100%);
   transition: opacity 0.18s ease, transform 0.18s ease;
 }
 
@@ -167,8 +186,30 @@ body {
 /* ─── Dot grid background pattern ───────────────── */
 
 .dot-grid-bg {
-  background-image: radial-gradient(circle, rgba(169, 0, 241, 0.08) 1px, transparent 1px);
+  background-image: radial-gradient(circle, rgba(169, 0, 241, 0.14) 1px, transparent 1px);
   background-size: 28px 28px;
+}
+
+.brand-orb { background: radial-gradient(circle at center, rgba(255, 29, 121, 0.16), transparent 68%); }
+
+.hero-art { filter: drop-shadow(0 28px 50px rgba(11, 1, 37, 0.28)); }
+
+.hero-panel {
+  background: linear-gradient(145deg, rgba(255, 255, 255, 0.11), rgba(255, 255, 255, 0.025));
+  border: 1px solid rgba(255, 255, 255, 0.16);
+  box-shadow: 0 28px 70px rgba(9, 2, 28, 0.2);
+  backdrop-filter: blur(10px);
+}
+
+.brand-input:focus {
+  border-color: #64dfec !important;
+  box-shadow: 0 0 0 4px rgba(100, 223, 236, 0.14);
+}
+
+@media (max-width: 640px) {
+  .site-header { padding: 14px 20px; }
+  .site-header img { width: 98px !important; }
+  .eyebrow { font-size: 0.58rem; letter-spacing: 0.08em; }
 }
 
 /* ─── Transition screen ──────────────────────────── */

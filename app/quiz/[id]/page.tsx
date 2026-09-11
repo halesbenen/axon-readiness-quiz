@@ -124,7 +124,7 @@ export default function QuizPage() {
           <h2 className="mb-4 anim-fade-up delay-200" style={{ fontSize: 36, fontWeight: 600, color: '#ffffff', lineHeight: 1.2 }}>
             {currentDimension.label}
           </h2>
-          <p className="mb-3 anim-fade-up delay-300" style={{ fontSize: 16, fontWeight: 300, color: '#b0b8c8', lineHeight: 1.65 }}>
+          <p className="mb-3 anim-fade-up delay-300" style={{ fontSize: 16, fontWeight: 300, color: 'rgba(255,255,255,0.76)', lineHeight: 1.65 }}>
             {currentDimension.description}
           </p>
           <p className="mb-10 anim-fade-up delay-400" style={{ fontSize: 13, color: '#a900f1', fontWeight: 400 }}>
@@ -159,9 +159,9 @@ export default function QuizPage() {
 
   // Question card
   return (
-    <div className="flex-1 flex flex-col dot-grid-bg" style={{ backgroundColor: '#fdf5ff' }}>
+    <div className="flex-1 flex flex-col dot-grid-bg" style={{ backgroundColor: '#ffffff' }}>
       {/* Progress bar */}
-      <div style={{ height: 4, backgroundColor: '#ede0ff' }}>
+      <div style={{ height: 4, backgroundColor: 'rgba(169,0,241,0.18)' }}>
         <div
           className="gradient-bar"
           style={{ width: `${progressPercent}%`, transition: 'width 0.4s cubic-bezier(0.22, 1, 0.36, 1)', height: '100%', borderRadius: 0 }}
@@ -169,7 +169,7 @@ export default function QuizPage() {
       </div>
 
       {/* Header */}
-      <div className="px-6 py-3 flex items-center justify-between" style={{ backgroundColor: '#ffffff', borderBottom: '1px solid #ede0ff' }}>
+      <div className="px-6 py-3 flex items-center justify-between" style={{ backgroundColor: '#ffffff', borderBottom: '1px solid rgba(169,0,241,0.18)' }}>
         {/* eslint-disable-next-line @next/next/no-img-element */}
         <img src="/axon-logo-colour.svg" alt="Axon IT" style={{ height: 28, width: 'auto' }} />
         <span className="text-xs" style={{ color: '#a900f1', fontWeight: 400 }}>
@@ -250,8 +250,8 @@ function OptionList({
               animationDelay: `${0.04 + idx * 0.06}s`,
               padding: '15px 20px',
               borderRadius: 10,
-              border: isSelected ? '2px solid #a900f1' : '1.5px solid #ede0ff',
-              backgroundColor: isSelected ? '#f5eaff' : '#ffffff',
+              border: isSelected ? '2px solid #a900f1' : '1.5px solid rgba(169,0,241,0.18)',
+              backgroundColor: isSelected ? 'rgba(255,29,121,0.08)' : '#ffffff',
               cursor: disabled ? 'default' : 'pointer',
               textAlign: 'left',
               fontSize: 14,
